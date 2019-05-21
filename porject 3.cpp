@@ -5,7 +5,7 @@ int main(){
 	
 char inital[] = "Please";
 char add[] = "130.195.6.196"
-int = 1024;
+int = 1025;
 int connect_to_server(add[],port);
 
 int send_to_server(inital[]);
