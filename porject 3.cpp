@@ -3,13 +3,14 @@
 int main(){
 	
 	
-char inital[] = "Please";
-char add[] = "130.195.6.196"
-int = 1024;
-int connect_to_server(add[],port);
+char inital[24] = {'P','l','e','a','s','e''};
+char add[15] = {'1','3','0','.','1','9','5','.','6','.','1','9','6'};
+int port = 1024;
+		   char pass[24];
+connect_to_server(add,port);
 
-int send_to_server(inital[]);
-int receive_from_server(char message[24]);
-int send_to_server(char message[24]);
+send_to_server(inital);
+receive_from_server(pass);
+send_to_server(pass);
 
 }
