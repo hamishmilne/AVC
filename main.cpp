@@ -173,14 +173,26 @@ int Robot::checkLine() {
     std::cout << blackMiddle << std::endl;
     std::cout << blackRight << std::endl;
 
-    if(blackLeft > blackMiddle && blackLeft > blackRight) return 0;
+    //Make sure there is a line detected
+    if(blackLeft > 75 || blackMiddle > 75 || blackRight > 75) {
 
-    if(blackMiddle > blackLeft && blackMiddle > blackRight) return 1;
+        //If the left has the most "black" pixels
+        if(blackLeft > blackMiddle && blackLeft > blackRight) {
+            return 0;
+        }
 
-    if(blackRight > blackLeft && blackRight > blackMiddle) return 2;
-    
+        //If the middle has the most "black" pixels
+        if(blackMiddle > blackLeft && blackMiddle > blackRight) {
+            return 1;
+        }
 
-    return 3;
+        //If the right has the most "black" pixels
+        if(blackRight > blackLeft && blackRight > blackMiddle) {
+            return 2;
+        }
+    }else{
+        return 3;
+    }
 }
 
 
@@ -195,7 +207,30 @@ int main() {
     open_screen_stream();
 
     while(true) {
-        std::cout << r.checkLine() << std::endl;
+        //std::cout << r.checkLine() << std::endl;
+
+
+        switch (r.checkLine())
+        {
+        case 0:
+            std::cout << "Move left!" << std::endl;
+            r.startLeft();
+            break;
+        case 1:
+            std::cout << "Stay straight" << std::endl;
+            r.startForward();
+            break;
+        case 2:
+            std::cout << "Move right" << std::endl;
+            r.startRight();
+            break;
+        case 3:
+            std::cout << "No line! Moving back" << std::endl;
+            break;
+        }
+
+
+
         update_screen();
         sleep1(300);
     }
