@@ -126,7 +126,7 @@ bool getBlack(int x, int y) {
     // Gamma compand and rescale to byte range:
     int greyLevel = (int) (255.0 * pow(lum, 1.0 / 2.2));
     
-    if(greyLevel > 255/2) {
+    if(greyLevel > 255/3) {
 		return false;
 	}else{
 		return true;
@@ -137,8 +137,8 @@ int Robot::checkLine() {
 
     take_picture();
 
-    int width = 240;
-    int height = 320;
+    int width = 320;
+    int height = 240;
 
     int blackLeft = 0;
     int blackMiddle = 0;
@@ -149,29 +149,29 @@ int Robot::checkLine() {
 
         //Left side of screen
         for(int x = 0; x < width / 3; x++) {
-            if(getBlack(x, y)) {
+            if(getBlack(y, x)) {
 				 blackLeft++;
 			}
         }
 
         //Middle of screen
         for(int x = width / 3; x < width / 3 * 2; x++) {
-            if(getBlack(x, y)) {
+            if(getBlack(y, x)) {
 				blackMiddle++;
 			}
         }
 
         //Right side of screen
         for(int x = width / 3 * 2; x <  width; x++) {
-            if(getBlack(x, y)) {
+            if(getBlack(y, x)) {
 				blackRight++;
 			}
         }
     }
     
-    //std::cout << blackLeft << std::endl;
-    //std::cout << blackMiddle << std::endl;
-    //std::cout << blackRight << std::endl;
+    std::cout << blackLeft << std::endl;
+    std::cout << blackMiddle << std::endl;
+    std::cout << blackRight << std::endl;
 
     if(blackLeft > blackMiddle && blackLeft > blackRight) return 0;
 
