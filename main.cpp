@@ -37,33 +37,33 @@ int checkLine() {
     int blackRight = 0;
 
     //Loop through each col
-    for(int y = 0; y < height; y++) {
+    for(int y = 0; y < height; y+=4) {
 
         //Left side of screen
-        for(int x = 0; x < width / 3; x++) {
+        for(int x = 0; x < width / 3; x+=4) {
             if(getBlack(y, x)) {
 				 blackLeft++;
 			}
         }
 
         //Middle of screen
-        for(int x = width / 3; x < width / 3 * 2; x++) {
+        for(int x = width / 3; x < width / 3 * 2; x+=4) {
             if(getBlack(y, x)) {
 				blackMiddle++;
 			}
         }
 
         //Right side of screen
-        for(int x = width / 3 * 2; x <  width; x++) {
+        for(int x = width / 3 * 2; x <  width; x+=4) {
             if(getBlack(y, x)) {
 				blackRight++;
 			}
         }
     }
     
-    std::cout << blackLeft << std::endl;
-    std::cout << blackMiddle << std::endl;
-    std::cout << blackRight << std::endl;
+    //std::cout << blackLeft << std::endl;
+    //std::cout << blackMiddle << std::endl;
+    //std::cout << blackRight << std::endl;
 
     //Make sure there is a line detected
     if(blackLeft > 75 || blackMiddle > 75 || blackRight > 75) {
@@ -85,30 +85,29 @@ int checkLine() {
     }else{
         return 3;
     }
+    return 3;
 }
 
 void changeDirection(int dir) {
 
-    int speed = 4;
-
     if(dir == 0) {
-        set_motors(5, 48 + speed);
-        set_motors(1, 48 + speed);
+		set_motors(5, 48);  //Left
+		set_motors(1, 43);  //Right
     }
 
     if(dir == 1) {
-        set_motors(5, 48 - speed);
-        set_motors(1, 48 + speed);
+        set_motors(5, 51);  //Left
+		set_motors(1, 43);  //Right
     }
 
     if(dir == 2) {
-        set_motors(5, 48 - speed);
-        set_motors(1, 48 - speed);
+        set_motors(5, 50);  //Left
+		set_motors(1, 48);  //Right
     }
 
     if(dir == 3) {
-        set_motors(5, 48 + speed);
-        set_motors(1, 48 - speed);
+        set_motors(5, 42);  //Left
+		set_motors(1, 52);  //Right
     }
 
     hardware_exchange();
@@ -117,19 +116,21 @@ void changeDirection(int dir) {
 
 //Main code
 int main() {
+	std::cout << "Starting program..." << std::endl;
     init(0);
-
-    set_motors(5, 48);  //Left
-    set_motors(1, 48);  //Right
+	set_motors(5, 48);  //Left
+	set_motors(1, 48);  //Right
     hardware_exchange();
 
-    int lastLine = 3;
-
+    int lastLine = 5;
+    
+    
     while(true) {
 
         int currentLine = checkLine();
 
-        if(currentLine == lastLine) {
+        if(currentLine != lastLine) {
+			lastLine = currentLine;
             switch (currentLine)
             {
             case 0:
@@ -150,7 +151,7 @@ int main() {
                 break;
             }
         }
-        sleep1(50);
+        //sleep1(200);
     }
 
 
