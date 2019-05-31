@@ -116,25 +116,29 @@ void changeDirection(int dir) {
 
 //Main code
 int main() {
+	//Open gate
 	std::cout << "Starting program..." << std::endl;
 	char inital[24] = {'P','l','e','a','s','e'};
 	char add[15] = {'1','3','0','.','1','9','5','.','6','.','1','9','6'};
 	int port = 1024;
 	char pass[24];
 	connect_to_server(add,port);
-
 	send_to_server(inital);
 	receive_from_server(pass);
 	send_to_server(pass);
-	std::cout << "Finished with gate" << endl;
-	//sleep1(1000);
+	std::cout << "Finished with gate" << std::endl;
+
     init(0);
-	set_motors(5, 48);  //Left
-	set_motors(1, 48);  //Right
+	set_motors(5, 51);  //Left
+	set_motors(1, 43);  //Right
     hardware_exchange();
 
-    int lastLine = 5;
+    int lastLine = 3;
     
+    //Used to make the robot move forward until it finds the line
+    while(checkLine() == 3) {
+	}
+		
     
     while(true) {
 
