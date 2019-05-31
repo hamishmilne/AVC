@@ -2,114 +2,6 @@
 #include "E101.h"
 #include <math.h>
 
-class Motor {
-    unsigned char num;              //Motor num 
-    unsigned char pwm;              //Motor speed 
-    bool left;                      //Is the motor on the left or right?
-
-    public:
-        Motor();                    //Dont use
-        Motor(unsigned char motor_num, unsigned char motor_speed, bool motor_left);
-        void forward();
-        void back();
-        void stop();
-};
-
-class Robot {
-    Motor left;                     //Left motor
-    Motor right;                    //Right motor
-    
-    public:
-        Robot();                    //Dont use
-        Robot(Motor motor_left, Motor motor_right);
-        void startLeft();
-        void startRight();
-        void startForward();
-        void stop();
-        int checkLine();
-};
-
-//Motor constructer, usage: Motor m(num, pwn);
-Motor::Motor(unsigned char motor_num, unsigned char motor_speed, bool motor_left) {
-    num = motor_num;
-    pwm = motor_speed;
-    left = motor_left;
-    set_motors(num, pwm);
-    hardware_exchange();
-}
-
-//Does nothing
-Motor::Motor() {
-
-}
-
-//Move motor forward
-void Motor::forward() {
-    //If a motor is on the left or right sight it should move in the reverse direction to the other
-    if(left) {
-        pwm = 65;
-    }else{
-        pwm = 30;
-    }
-    set_motors(num, pwm);
-    hardware_exchange();
-}
-
-//Move motor backwards
-void Motor::back() {
-    //If a motor is on the left or right sight it should move in the reverse direction to the other
-    if(left) {
-        pwm = 30;
-    }else{
-        pwm = 65;
-    }
-    set_motors(num, pwm);
-    hardware_exchange();
-}
-
-//Stop motor
-void Motor::stop() {
-    pwm = 48;
-    set_motors(num, pwm);
-    hardware_exchange();
-}
-
-Robot::Robot(Motor motor_left, Motor motor_right) {
-    left = motor_left;
-    right = motor_right;
-
-    //Create camera here etc
-}
-
-//Does nothing
-Robot::Robot() {
-
-}
-
-//Moves both motors forward
-void Robot::startForward() {
-    left.forward();
-    right.forward();
-}
-
-//Moves robot left
-void Robot::startLeft() {
-    left.back();
-    right.forward();
-}
-
-//Moves robot right
-void Robot::startRight() {
-    left.forward();
-    right.back();
-}
-
-//Stop robot
-void Robot::stop() {
-    left.stop();
-    right.stop();
-}
-
 bool getBlack(int x, int y) {
     int r = get_pixel(x, y, 0);
     int g = get_pixel(x, y, 1);
@@ -133,7 +25,7 @@ bool getBlack(int x, int y) {
 	}
 }
 
-int Robot::checkLine() {
+int checkLine() {
 
     take_picture();
 
@@ -195,44 +87,70 @@ int Robot::checkLine() {
     }
 }
 
+void changeDirection(int dir) {
+
+    int speed = 4;
+
+    if(dir == 0) {
+        set_motors(5, 48 + speed);
+        set_motors(1, 48 + speed);
+    }
+
+    if(dir == 1) {
+        set_motors(5, 48 - speed);
+        set_motors(1, 48 + speed);
+    }
+
+    if(dir == 2) {
+        set_motors(5, 48 - speed);
+        set_motors(1, 48 - speed);
+    }
+
+    if(dir == 3) {
+        set_motors(5, 48 + speed);
+        set_motors(1, 48 - speed);
+    }
+
+    hardware_exchange();
+}
+
 
 //Main code
 int main() {
     init(0);
 
-    Motor left(3, 48, true);    //Left motor is on port 3
-    Motor right(4, 48, false);  //Right motor is on port 4
-    Robot r(left, right);
+    set_motors(5, 48);  //Left
+    set_motors(1, 48);  //Right
+    hardware_exchange();
 
-    open_screen_stream();
+    int lastLine = 3;
 
     while(true) {
-        //std::cout << r.checkLine() << std::endl;
 
+        int currentLine = checkLine();
 
-        switch (r.checkLine())
-        {
-        case 0:
-            std::cout << "Move left!" << std::endl;
-            r.startLeft();
+        if(currentLine == lastLine) {
+            switch (currentLine)
+            {
+            case 0:
+                std::cout << "Move left!" << std::endl;
+                changeDirection(currentLine);
+                break;
+            case 1:
+                std::cout << "Stay straight" << std::endl;
+                changeDirection(currentLine);
+                break;
+            case 2:
+                std::cout << "Move right" << std::endl;
+                changeDirection(currentLine);
             break;
-        case 1:
-            std::cout << "Stay straight" << std::endl;
-            r.startForward();
-            break;
-        case 2:
-            std::cout << "Move right" << std::endl;
-            r.startRight();
-            break;
-        case 3:
-            std::cout << "No line! Moving back" << std::endl;
-            break;
+            case 3:
+                std::cout << "No line! Moving back" << std::endl;
+                changeDirection(currentLine);
+                break;
+            }
         }
-
-
-
-        update_screen();
-        sleep1(300);
+        sleep1(50);
     }
 
 
